@@ -2,14 +2,14 @@ use cosmwasm_std::{
     entry_point, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 };
 
-use rhaki_cw_plus::traits::IntoAddr;
+use rhaki_cw_plus::traits::{IntoAddr, IntoBinary};
 
 use crate::{
     definitons::Config,
     execute::{run_create_position, run_trigger},
     msg::{ExecuteMsg, InstantiateMsg, QueryMsg},
     response::ContractResponse,
-    state::CONFIG,
+    state::CONFIG, querier::qy_positions,
 };
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -43,6 +43,6 @@ pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-    QueryMsg::GetPositions { user, start_after, limit } => todo!(),
+    QueryMsg::GetPositions { user, start_after, limit } => qy_positions(deps, user, start_after, limit).into_binary(),
 }
 }

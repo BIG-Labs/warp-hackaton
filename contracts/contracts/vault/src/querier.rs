@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use astroport::{asset::AssetInfo, pair::PoolResponse};
 use cosmwasm_std::{Decimal, Deps, Order, StdResult, Uint128};
+use rhaki_cw_plus::traits::IntoAddr;
 
 use crate::{
     definitons::UserPosition,
@@ -36,12 +37,12 @@ pub fn qy_positions(
     start_after: Option<u64>,
     limit: Option<u32>,
 ) -> StdResult<Vec<UserPosition>> {
-    let a = rhaki_cw_plus::storage::multi_index::get_multi_index_values(
+   Ok(rhaki_cw_plus::storage::multi_index::get_multi_index_values(
         deps.storage,
-        user,
+        user.into_addr(deps.api)?,
         POSITIONS().idx.owner,
         Order::Ascending,
         start_after,
         limit,
-    )?;
+    )?.into_iter().map(|(_, val)| {val}).collect())
 }
